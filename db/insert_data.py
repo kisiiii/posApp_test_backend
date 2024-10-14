@@ -2,8 +2,8 @@
 
 import csv
 from sqlalchemy.orm import Session
-from mymodels import Product
-from database import engine
+from .mymodels import Product
+from .database import engine
 
 # CSVファイルのパス
 csv_file_path = "C:/Users/kishi/Downloads/vegetable_products_jp.csv"

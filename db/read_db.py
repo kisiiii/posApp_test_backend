@@ -1,8 +1,8 @@
 #データベースの中身を確認
 
 from sqlalchemy.orm import Session
-from database import engine
-from mymodels import Product, Tax, Transaction, TransactionDetail
+from .database import engine
+from .mymodels import Product, Tax, Transaction, TransactionDetail
 
 def fetch_all_data():
     with Session(engine) as session:

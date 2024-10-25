@@ -13,6 +13,7 @@ class Product(Base):
     CODE = Column(String(13), unique=True, nullable=False)
     NAME = Column(String(50), nullable=False)
     PRICE = Column(Integer, nullable=False)
+    #COST = Column(Integer, nullable=False)
 
     details = relationship("TransactionDetail", back_populates="product")
 

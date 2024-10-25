@@ -30,7 +30,7 @@ def get_product_info(code: str, db: Session = Depends(get_db)):
     if product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    return {"name": product.NAME, "price": product.PRICE, "cost":product.COST}
+    return {"name": product.NAME, "price": product.PRICE, "cost":product.COST, "supllier":product.SUPPLIER, "manufacuturer":product.MANUFACTURER}
 
 # 購入処理エンドポイント
 # Pydanticモデルを定義して、リクエストデータをバリデーション

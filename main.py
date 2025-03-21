@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-# CORSの設定
+## CORSの設定
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # 必要に応じて特定のオリジンに変更 ["http://localhost:3000"]
@@ -17,12 +17,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+## rootページ
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
-# 商品コードから名前と価格を取得するエンドポイント
+
+## 商品コードから名前と価格を取得する
 @app.get("/product/{code}")
 def get_product_info(code: str, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.CODE == code).first()
@@ -30,10 +31,44 @@ def get_product_info(code: str, db: Session = Depends(get_db)):
     if product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    return {"name": product.NAME, "price": product.PRICE, "cost":product.COST, "supllier":product.SUPPLIER, "manufacuturer":product.MANUFACTURER}
+    return {"name": product.NAME, "price": product.PRICE}
 
-# 購入処理エンドポイント
-# Pydanticモデルを定義して、リクエストデータをバリデーション
+
+## 商品情報の登録
+class ProductCreate(BaseModel):
+    barcode: str
+    name: str
+    price: float
+
+class ProductResponse(BaseModel):
+    PRD_ID: int
+    CODE: str
+    NAME: str
+    PRICE: int
+
+    class Config:
+        orm_mode = True
+
+@app.post("/product", response_model=ProductResponse)
+def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+    # 既存コードの存在チェック
+    existing = db.query(Product).filter(Product.CODE == product.barcode).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="同じバーコードの商品が既に登録されています。")
+
+    # 新規登録処理
+    db_product = Product(
+        CODE=product.barcode,
+        NAME=product.name,
+        PRICE=product.price,
+    )
+    db.add(db_product)
+    db.commit()
+    db.refresh(db_product)
+    return db_product
+
+
+## 購入処理
 class CartItem(BaseModel):
     name: str
     price: int

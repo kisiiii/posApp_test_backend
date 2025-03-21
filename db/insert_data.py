@@ -6,7 +6,7 @@ from .mymodels import Product
 from .database import engine
 
 # CSVファイルのパス
-csv_file_path = "C:/Users/kishi/Downloads/vegetable_products_jp.csv"
+csv_file_path = "vegetable_products_jp.csv"
 
 # データベースへのセッションを作成
 session = Session(bind=engine)
@@ -17,7 +17,7 @@ with open(csv_file_path, mode='r', encoding='utf-8') as file:
     for row in reader:
         # Productオブジェクトを作成
         product = Product(
-            CODE=row['CODE'],  # CSVのカラム名に合わせる
+            CODE=row['CODE'],
             NAME=row['NAME'],
             PRICE=int(row['PRICE'])
         )
